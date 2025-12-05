@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservar Hora – MedRegistro Pro</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- NAVBAR -->
+  <nav class="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-2">
+      <i class="fa-solid fa-hospital text-xl text-blue-600"></i>
+      <span id="navClinicaNombre" class="text-lg font-bold text-blue-700">Clínica</span>
+    </div>
+
+    <div class="relative">
+      <button id="userBtn" class="flex items-center gap-2 text-sm text-gray-700 hover:text-blue-600">
+        <i class="fa-solid fa-circle-user text-xl text-blue-600"></i>
+        <span id="userName">Usuario</span>
+        <i class="fa-solid fa-chevron-down text-xs"></i>
+      </button>
+
+      <div id="userMenu"
+           class="hidden absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden text-sm">
+        <a href="PanelUsuario.html" id="userPanel"
+           class="block px-4 py-3 text-gray-700 hover:bg-gray-50">Panel de usuario</a>
+        <a href="PanelAdmin.html" id="adminPanel"
+           class="block px-4 py-3 text-gray-700 hover:bg-gray-50 hidden">Panel administrador</a>
+        <button id="logoutBtn"
+                class="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50">
+          Cerrar sesión
+        </button>
+        <a href="Clinicas.html"
+           class="block px-4 py-3 text-gray-700 hover:bg-gray-50">
+          Clínicas disponibles
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-1 flex justify-center px-4 py-8">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-4xl">
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-6 text-center">
+        Reservar hora médica
+      </h1>
+
+      <form id="reservaForm" class="space-y-6">
+        <div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
+          <h2 class="text-lg font-semibold text-gray-800 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-hospital text-blue-600"></i> Clínica seleccionada
+          </h2>
+          <p id="clinicaNombre" class="font-medium text-gray-900">Cargando...</p>
+          <p id="clinicaDireccion" class="text-sm text-gray-600"></p>
+        </div>
+
+        <!-- ESPECIALIDAD / DOCTOR / FECHA -->
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Especialidad
+            </label>
+            <select id="especialidad" required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <option value="">Seleccione una especialidad</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Doctor
+            </label>
+            <select id="doctor" required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <option value="">Seleccione un doctor</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Fecha
+            </label>
+            <input type="date" id="fecha" required
+                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+        </div>
+
+        <!-- HORAS COMO BOTONES -->
+        <div class="mt-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Hora
+          </label>
+          <!-- aquí guardamos la hora elegida -->
+          <input type="hidden" id="hora">
+
+          <div id="horasContainer"
+               class="border border-gray-200 rounded-lg px-3 py-3 bg-white text-sm text-gray-600">
+            <p>Primero selecciona especialidad, doctor y fecha para ver las horas disponibles.</p>
+          </div>
+        </div>
+
+        <!-- MONTO / MÉTODO PAGO -->
+        <div class="grid md:grid-cols-2 gap-4 items-center">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Monto total
+            </label>
+            <p id="monto" class="text-2xl font-semibold text-gray-900">$0</p>
+            <p class="text-xs text-gray-500">El valor puede variar según especialidad y clínica.</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Método de pago
+            </label>
+            <div class="space-y-1 text-sm text-gray-700">
+              <label class="flex items-center gap-2">
+                <input type="radio" name="metodo_pago" value="debito" required class="text-blue-600">
+                <span>Tarjeta de débito</span>
+              </label>
+              <label class="flex items-center gap-2">
+                <input type="radio" name="metodo_pago" value="credito" class="text-blue-600">
+                <span>Tarjeta de crédito</span>
+              </label>
+              <label class="flex items-center gap-2">
+                <input type="radio" name="metodo_pago" value="clinica" class="text-blue-600">
+                <span>Pago en clínica</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <p id="reservaMensaje" class="text-sm text-red-600 hidden"></p>
+
+        <div class="flex flex-col md:flex-row gap-3 md:justify-end">
+          <button type="button"
+                  onclick="window.location.href='Clinicas.html'"
+                  class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 text-sm hover:bg-gray-100">
+            Volver a clínicas
+          </button>
+          <button type="submit"
+                  class="px-6 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700">
+            Confirmar reserva
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- MODAL ÉXITO -->
+  <div id="modalExito" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
+      <i class="fa-solid fa-circle-check text-green-500 text-4xl mb-3"></i>
+      <h2 class="text-xl font-semibold text-gray-900 mb-2">Reserva registrada con éxito</h2>
+      <p class="text-sm text-gray-600 mb-4">
+        Tu cita ha sido agendada. Recuerda llegar con algunos minutos de anticipación.
+      </p>
+      <div class="flex flex-col gap-2">
+        <button id="btnDescargarPdf"
+                class="w-full px-4 py-2 rounded-lg bg-gray-800 text-white text-sm hover:bg-gray-900">
+          Descargar comprobante (PDF)
+        </button>
+        <button onclick="window.location.href='PanelUsuario.html'"
+                class="w-full px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-100">
+          Ir a mi panel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getUser() {
+      try {
+        return JSON.parse(localStorage.getItem('mr_user') || 'null');
+      } catch { return null; }
+    }
+
+    const user = getUser();
+    if (!user) {
+      window.location.href = 'IniciarSesion.html';
+    }
+
+    document.getElementById('userName').textContent = user.nombres + " " + user.apellidos;
+
+    if (user.rol === 'admin') {
+      document.getElementById('adminPanel').classList.remove('hidden');
+    }
+
+    document.getElementById('userBtn').addEventListener('click', () => {
+      document.getElementById('userMenu').classList.toggle('hidden');
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = 'PaginaPrincipal.html';
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    let clinicaId = params.get('clinica_id') || sessionStorage.getItem('mr_clinica_id');
+
+    if (!clinicaId) {
+      const msg = document.getElementById('reservaMensaje');
+      msg.textContent = 'No se ha seleccionado una clínica.';
+      msg.classList.remove('hidden');
+    } else {
+      sessionStorage.setItem('mr_clinica_id', clinicaId);
+    }
+
+    async function cargarClinica() {
+      try {
+        const res = await fetch(`/api/clinicas/${clinicaId}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error();
+
+        document.getElementById('clinicaNombre').textContent = data.nombre || 'Clínica';
+        document.getElementById('clinicaDireccion').textContent = data.direccion || '';
+        document.getElementById('navClinicaNombre').textContent = data.nombre || 'Clínica';
+
+      } catch (err) {
+        document.getElementById('clinicaNombre').textContent = 'Clínica no encontrada';
+      }
+    }
+
+    async function cargarEspecialidades() {
+      try {
+        const res = await fetch(`/api/especialidades?clinica_id=${clinicaId}`);
+        const data = await res.json();
+        const sel = document.getElementById('especialidad');
+        sel.innerHTML = '<option value="">Seleccione una especialidad</option>';
+        if (!res.ok || !Array.isArray(data)) return;
+
+        data.forEach(e => {
+          const opt = document.createElement('option');
+          opt.value = e.id;
+          opt.textContent = e.nombre;
+          sel.appendChild(opt);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // formatear "HH:mm" -> "10:00 am"
+    function formatearHoraHumana(horaStr) {
+      const [hStr, mStr] = horaStr.split(':');
+      let h = parseInt(hStr, 10);
+      const m = parseInt(mStr || '0', 10);
+      let suf = 'am';
+
+      if (h === 0) {
+        h = 12;
+      } else if (h === 12) {
+        suf = 'pm';
+      } else if (h > 12) {
+        h = h - 12;
+        suf = 'pm';
+      }
+
+      return `${h}:${m.toString().padStart(2, '0')} ${suf}`;
+    }
+
+    async function cargarHoras() {
+      const doctorId = document.getElementById('doctor').value;
+      const fecha = document.getElementById('fecha').value;
+      const cont = document.getElementById('horasContainer');
+      const hiddenHora = document.getElementById('hora');
+
+      hiddenHora.value = ''; // limpiar selección al cambiar doctor/fecha
+      cont.innerHTML = '<p class="text-sm text-gray-500">Seleccione especialidad, doctor y fecha para ver horas disponibles.</p>';
+
+      if (!doctorId || !fecha) return;
+
+      try {
+        const res = await fetch(`/api/reservas/horas-disponibles?doctor_id=${doctorId}&fecha=${fecha}`);
+        const data = await res.json();
+        if (!res.ok || !Array.isArray(data) || data.length === 0) {
+          cont.innerHTML = '<p class="text-sm text-gray-500">No hay horas disponibles para esta fecha.</p>';
+          return;
+        }
+
+        // Agrupar por mañana, tarde, noche
+        const grupos = { manana: [], tarde: [], noche: [] };
+
+        data.forEach(horaStr => {
+          const [hStr] = horaStr.split(':');
+          const h = parseInt(hStr, 10);
+
+          if (h < 12) {
+            grupos.manana.push(horaStr);
+          } else if (h < 19) {
+            grupos.tarde.push(horaStr);
+          } else {
+            grupos.noche.push(horaStr);
+          }
+        });
+
+        let html = '';
+
+        function renderGrupo(nombre, etiqueta) {
+          const lista = grupos[nombre];
+          if (!lista || lista.length === 0) return '';
+
+          let bloque = `
+            <div class="mb-3">
+              <div class="flex items-center mb-2">
+                <span class="text-xs font-semibold text-gray-500 mr-2">${etiqueta}</span>
+                <div class="flex-1 border-t border-gray-200"></div>
+              </div>
+              <div class="flex flex-wrap gap-2">
+          `;
+
+          lista.forEach(h => {
+            bloque += `
+              <button type="button"
+                      class="slot-btn px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-xs md:text-sm hover:border-blue-500 hover:bg-blue-50"
+                      data-hora="${h}">
+                ${formatearHoraHumana(h)}
+              </button>
+            `;
+          });
+
+          bloque += `</div></div>`;
+          return bloque;
+        }
+
+        html += renderGrupo('manana', 'Mañana');
+        html += renderGrupo('tarde', 'Tarde');
+        html += renderGrupo('noche', 'Noche');
+
+        cont.innerHTML = html || '<p class="text-sm text-gray-500">No hay horas disponibles para esta fecha.</p>';
+
+        // Eventos de click en cada botón
+        const botones = cont.querySelectorAll('.slot-btn');
+        botones.forEach(btn => {
+          btn.addEventListener('click', () => {
+            // quitar selección anterior
+            botones.forEach(b => {
+              b.classList.remove('bg-blue-50', 'border-blue-500', 'text-blue-700', 'shadow-sm');
+            });
+            // marcar nuevo
+            btn.classList.add('bg-blue-50', 'border-blue-500', 'text-blue-700', 'shadow-sm');
+
+            hiddenHora.value = btn.dataset.hora;
+          });
+        });
+
+      } catch (err) {
+        console.error(err);
+        cont.innerHTML = '<p class="text-sm text-red-500">Error al cargar horas disponibles.</p>';
+      }
+    }
+
+    document.getElementById('especialidad').addEventListener('change', async (e) => {
+      const espId = e.target.value;
+      const sel = document.getElementById('doctor');
+      sel.innerHTML = '<option value="">Seleccione un doctor</option>';
+      document.getElementById('hora').value = '';
+      document.getElementById('horasContainer').innerHTML =
+        '<p class="text-sm text-gray-500">Selecciona doctor y fecha para ver horas disponibles.</p>';
+      if (!espId) return;
+
+      try {
+        const res = await fetch(`/api/doctores?clinica_id=${clinicaId}&especialidad_id=${espId}`);
+        const data = await res.json();
+        if (!res.ok || !Array.isArray(data)) return;
+        data.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.id;
+          opt.textContent = d.nombre;
+          sel.appendChild(opt);
+        });
+        document.getElementById('monto').textContent = `$${data[0]?.monto || 25000}`;
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    document.getElementById('doctor').addEventListener('change', cargarHoras);
+    document.getElementById('fecha').addEventListener('change', cargarHoras);
+
+    document.getElementById('reservaForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('reservaMensaje');
+      msg.classList.add('hidden');
+
+      const especialidad_id = document.getElementById('especialidad').value;
+      const doctor_id = document.getElementById('doctor').value;
+      const fecha = document.getElementById('fecha').value;
+      const hora = document.getElementById('hora').value;   // ahora viene del hidden
+      const montoTexto = document.getElementById('monto').textContent.replace('$', '').replace('.', '');
+      const monto = parseInt(montoTexto) || 25000;
+      const metodo = document.querySelector('input[name="metodo_pago"]:checked')?.value;
+
+      if (!especialidad_id || !doctor_id || !fecha || !hora || !metodo) {
+        msg.textContent = 'Debes completar todos los datos y seleccionar una hora.';
+        msg.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/reservas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            clinica_id: clinicaId,
+            especialidad_id,
+            doctor_id,
+            fecha,
+            hora,
+            monto,
+            metodo_pago: metodo
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+          msg.textContent = data.mensaje || 'No se pudo crear la reserva.';
+          msg.classList.remove('hidden');
+          return;
+        }
+
+        if (metodo === 'clinica') {
+          document.getElementById('modalExito').classList.remove('hidden');
+          document.getElementById('btnDescargarPdf').onclick = () => {
+            window.open(`/api/reservas/${data.reserva.id}/comprobante`, '_blank');
+          };
+        } else {
+          window.location.href = `Transbank.html?reserva_id=${data.reserva.id}`;
+        }
+
+      } catch (err) {
+        console.error(err);
+        msg.textContent = 'Error al conectar con el servidor.';
+        msg.classList.remove('hidden');
+      }
+    });
+
+    cargarClinica();
+    cargarEspecialidades();
+  </script>
+</body>
+</html>

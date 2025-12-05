@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedRegistro Pro – Inicio</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #eaf2ff, #d6e4ff);
+      color: #333;
+    }
+    .hero-title {
+      animation: fadeInUp 1s ease-out;
+    }
+    .hero-text {
+      animation: fadeInUp 1.2s ease-out;
+    }
+    .cta-button {
+      animation: fadeInUp 1.4s ease-out;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    nav {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    footer {
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <!-- NAVBAR -->
+  <nav class="bg-white shadow-lg py-4 px-8 flex justify-between items-center sticky top-0 z-10">
+    <h1 class="text-2xl font-bold text-blue-700">MedRegistro Pro</h1>
+
+    <div class="flex gap-4">
+      <a href="IniciarSesion.html"
+         class="px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition duration-300 font-medium">
+        Iniciar Sesión
+      </a>
+
+      <a href="Registrar.html"
+         class="px-6 py-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition duration-300 font-medium">
+        Registrarse
+      </a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="flex-1 flex flex-col items-center justify-center text-center px-6 py-16">
+    <h2 class="hero-title text-4xl md:text-6xl font-bold text-gray-800 mb-6 leading-tight">
+      Reserva tus horas médicas de manera rápida y segura
+    </h2>
+
+    <p class="hero-text text-gray-600 text-lg md:text-xl max-w-3xl mb-10 leading-relaxed">
+      Todas las clínicas de Talca en un solo lugar. Agenda tu hora, paga online y recibe confirmación inmediata.
+    </p>
+
+    <a href="Clinicas.html"
+       class="cta-button px-12 py-5 text-lg rounded-2xl bg-blue-600 text-white hover:bg-blue-700 shadow-xl font-semibold">
+      Comenzar Ahora
+    </a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-blue-900 text-white text-center py-6 mt-10">
+    <p class="text-sm md:text-base">© 2025 MedRegistro Pro – Todos los derechos reservados.</p>
+  </footer>
+
+</body>
+</html>

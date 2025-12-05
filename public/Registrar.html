@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registrarse – MedRegistro Pro</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #eef2ff);
+    }
+    .card {
+      backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.95);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <nav class="bg-white/80 backdrop-blur-md shadow-sm px-6 py-4 flex justify-between items-center">
+    <a href="PaginaPrincipal.html" class="flex items-center gap-2">
+      <span class="text-2xl font-bold text-blue-700">MedRegistro Pro</span>
+    </a>
+    <div class="flex gap-3">
+      <a href="Clinicas.html" class="text-sm md:text-base text-gray-700 hover:text-blue-600 transition">
+        Ver Clínicas
+      </a>
+      <a href="IniciarSesion.html"
+         class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm md:text-base hover:bg-blue-700 transition">
+        Iniciar Sesión
+      </a>
+    </div>
+  </nav>
+
+  <main class="flex-1 flex items-center justify-center px-4 py-10">
+    <div class="card rounded-2xl shadow-2xl p-8 max-w-3xl w-full">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 text-center">
+        Crear cuenta de paciente
+      </h1>
+      <p class="text-center text-gray-600 mb-6">
+        Completa tus datos para comenzar a reservar tus horas médicas.
+      </p>
+
+      <form id="registroForm" class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label for="nombres" class="block text-sm font-medium text-gray-700 mb-1">
+            Nombres
+          </label>
+          <input type="text" id="nombres" required
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label for="apellidos" class="block text-sm font-medium text-gray-700 mb-1">
+            Apellidos
+          </label>
+          <input type="text" id="apellidos" required
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label for="rut" class="block text-sm font-medium text-gray-700 mb-1">
+            RUT
+          </label>
+          <input type="text" id="rut" required placeholder="11.111.111-1"
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label for="fecha_nacimiento" class="block text-sm font-medium text-gray-700 mb-1">
+            Fecha de nacimiento
+          </label>
+          <input type="date" id="fecha_nacimiento" required
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label for="correo" class="block text-sm font-medium text-gray-700 mb-1">
+            Correo electrónico
+          </label>
+          <input type="email" id="correo" required
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">
+            Teléfono
+          </label>
+          <input type="tel" id="telefono" placeholder="+56 9 1234 5678"
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label for="clave" class="block text-sm font-medium text-gray-700 mb-1">
+            Contraseña
+          </label>
+          <input type="password" id="clave" required minlength="6"
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label for="clave2" class="block text-sm font-medium text-gray-700 mb-1">
+            Confirmar contraseña
+          </label>
+          <input type="password" id="clave2" required minlength="6"
+                 class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div class="md:col-span-2 flex items-center gap-2 mt-2">
+          <input type="checkbox" id="terminos" required class="rounded border-gray-300">
+          <label for="terminos" class="text-sm text-gray-700">
+            Acepto los términos y condiciones del servicio.
+          </label>
+        </div>
+
+        <div class="md:col-span-2 mt-2">
+          <button type="submit"
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg py-2.5 transition">
+            Crear cuenta
+          </button>
+        </div>
+      </form>
+
+      <p id="registroMensaje" class="mt-4 text-center text-sm text-red-600 hidden"></p>
+
+      <p class="mt-4 text-center text-sm text-gray-600">
+        ¿Ya tienes cuenta?
+        <a href="IniciarSesion.html" class="text-blue-600 hover:underline font-medium">Inicia sesión aquí</a>
+      </p>
+    </div>
+  </main>
+
+  <footer class="bg-blue-900 text-white text-center py-4 text-sm">
+    © 2025 MedRegistro Pro – Todos los derechos reservados.
+  </footer>
+
+  <script>
+    const rutInput = document.getElementById('rut');
+
+    function formatearRut(valor) {
+      valor = valor.replace(/[^\dkK]/g, '').toUpperCase();
+      if (valor.length <= 1) return valor;
+      const cuerpo = valor.slice(0, -1);
+      const dv = valor.slice(-1);
+
+      let invertido = cuerpo.split('').reverse().join('');
+      let grupos = [];
+      for (let i = 0; i < invertido.length; i += 3) {
+        grupos.push(invertido.substr(i, 3));
+      }
+      const conPuntos = grupos.join('.').split('').reverse().join('');
+      return conPuntos + '-' + dv;
+    }
+
+    rutInput.addEventListener('input', (e) => {
+      const pos = e.target.selectionStart;
+      const largoOriginal = e.target.value.length;
+      e.target.value = formatearRut(e.target.value);
+      const largoNuevo = e.target.value.length;
+      const dif = largoNuevo - largoOriginal;
+      e.target.selectionStart = e.target.selectionEnd = pos + dif;
+    });
+
+    document.getElementById('registroForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('registroMensaje');
+      msg.classList.add('hidden');
+
+      const clave = document.getElementById('clave').value;
+      const clave2 = document.getElementById('clave2').value;
+      if (clave !== clave2) {
+        msg.textContent = 'Las contraseñas no coinciden.';
+        msg.classList.remove('hidden');
+        return;
+      }
+
+      const payload = {
+        nombres: document.getElementById('nombres').value.trim(),
+        apellidos: document.getElementById('apellidos').value.trim(),
+        rut: document.getElementById('rut').value.trim(),
+        fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
+        correo: document.getElementById('correo').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        clave
+      };
+
+      try {
+        const res = await fetch('/api/auth/registro', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.ok) {
+          msg.textContent = data.mensaje || 'Error al registrarse.';
+          msg.classList.remove('hidden');
+          return;
+        }
+
+        localStorage.setItem('mr_user', JSON.stringify(data.usuario));
+        window.location.href = 'PanelUsuario.html';
+
+      } catch (err) {
+        console.error(err);
+        msg.textContent = 'No se pudo conectar con el servidor.';
+        msg.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

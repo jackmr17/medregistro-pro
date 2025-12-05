@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrador – MedRegistro Pro</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+    }
+    .sidebar-link.active {
+      background: rgba(30, 64, 175, 0.15);
+      color: #1d4ed8;
+    }
+    .badge {
+      border-radius: 9999px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 bg-blue-900 text-blue-50 flex flex-col">
+    <div class="px-6 py-5 border-b border-blue-700 flex items-center gap-2">
+      <i class="fa-solid fa-stethoscope text-2xl"></i>
+      <div>
+        <div class="font-bold text-lg">MedRegistro Pro</div>
+        <div class="text-xs text-blue-200">Panel Administrador</div>
+      </div>
+    </div>
+
+    <nav class="flex-1 px-3 py-4 space-y-1">
+      <button data-tab="resumen"
+              class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-blue-800 active">
+        <i class="fa-solid fa-gauge"></i> Resumen
+      </button>
+      <button data-tab="reservas"
+              class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-blue-800">
+        <i class="fa-solid fa-calendar-days"></i> Reservas
+      </button>
+      <button data-tab="usuarios"
+              class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-blue-800">
+        <i class="fa-solid fa-users"></i> Usuarios
+      </button>
+      <button data-tab="clinicas"
+              class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-blue-800">
+        <i class="fa-solid fa-hospital"></i> Clínicas
+      </button>
+      <button data-tab="doctores"
+              class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-blue-800">
+        <i class="fa-solid fa-user-doctor"></i> Doctores
+      </button>
+      <button data-tab="especialidades"
+              class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-blue-800">
+        <i class="fa-solid fa-list"></i> Especialidades
+      </button>
+    </nav>
+
+    <div class="px-4 py-4 border-t border-blue-800 text-xs text-blue-100">
+      <div id="adminInfo" class="mb-2"></div>
+      <button id="logoutBtn"
+              class="w-full text-left flex items-center gap-2 text-red-200 hover:text-red-100 text-sm">
+        <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 p-6 lg:p-8">
+    <header class="flex flex-wrap justify-between items-center gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Panel de administración</h1>
+        <p class="text-gray-600 text-sm">
+          Gestiona usuarios, reservas, clínicas, doctores y especialidades del sistema.
+        </p>
+      </div>
+      <div class="flex gap-2">
+      
+        <a href="Clinicas.html"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700">
+          <i class="fa-solid fa-hospital"></i> Ver clínicas (vista usuario)
+        </a>
+      </div>
+    </header>
+
+    <!-- RESUMEN -->
+    <section id="tab-resumen" class="tab-content">
+      <div class="grid md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow p-4">
+          <p class="text-xs text-gray-500">Reservas de hoy</p>
+          <p id="cardReservasHoy" class="text-2xl font-bold text-gray-900">0</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4">
+          <p class="text-xs text-gray-500">Usuarios registrados</p>
+          <p id="cardUsuarios" class="text-2xl font-bold text-gray-900">0</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4">
+          <p class="text-xs text-gray-500">Clínicas activas</p>
+          <p id="cardClinicas" class="text-2xl font-bold text-gray-900">0</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Reservas recientes</h2>
+        <div id="tablaReservasRecientes"></div>
+      </div>
+    </section>
+
+    <!-- RESERVAS -->
+    <section id="tab-reservas" class="tab-content hidden">
+      <div class="bg-white rounded-xl shadow p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold text-gray-900">Todas las reservas</h2>
+        </div>
+        <div id="tablaReservasAdmin"></div>
+      </div>
+    </section>
+
+    <!-- USUARIOS -->
+    <section id="tab-usuarios" class="tab-content hidden">
+      <div class="bg-white rounded-xl shadow p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Usuarios registrados</h2>
+        <div id="tablaUsuarios"></div>
+      </div>
+    </section>
+
+    <!-- CLÍNICAS -->
+    <section id="tab-clinicas" class="tab-content hidden">
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="bg-white rounded-xl shadow p-6 lg:col-span-1">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Agregar / editar clínica</h2>
+          <form id="formClinica" class="space-y-3" enctype="multipart/form-data">
+            <input type="hidden" id="cli_id">
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+              <input type="text" id="cli_nombre" required
+                     class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+              <input type="text" id="cli_direccion"
+                     class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+              <input type="text" id="cli_telefono"
+                     class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                     placeholder="+56 9 1234 5678">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">URL Google Maps</label>
+              <input type="url" id="cli_maps"
+                     class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                     placeholder="https://maps.google.com/...">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Imagen de la clínica</label>
+              <input type="file" id="cli_imagen" accept="image/*"
+                     class="w-full text-sm text-gray-700">
+              <p class="text-xs text-gray-500 mt-1">
+                La imagen se almacenará en la carpeta <code>/imagenes</code>.
+              </p>
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg py-2.5 text-sm">
+              Guardar clínica
+            </button>
+            <p id="cli_msg" class="text-xs mt-2 text-red-600 hidden"></p>
+          </form>
+        </div>
+
+        <div class="bg-white rounded-xl shadow p-6 lg:col-span-2">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Clínicas registradas</h2>
+          <div id="tablaClinicas"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DOCTORES -->
+    <section id="tab-doctores" class="tab-content hidden">
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="bg-white rounded-xl shadow p-6 lg:col-span-1">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Agregar / editar doctor</h2>
+          <form id="formDoctor" class="space-y-3">
+            <input type="hidden" id="doc_id">
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Clínica</label>
+              <select id="doc_clinica" required
+                      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="">Seleccione una clínica</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Especialidad</label>
+              <select id="doc_especialidad" required
+                      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="">Seleccione especialidad</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nombre del doctor</label>
+              <input type="text" id="doc_nombre" required
+                     class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Monto consulta ($)</label>
+              <input type="number" id="doc_monto" min="0" step="1000" required
+                     class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+
+            <div class="flex items-center gap-2">
+              <input type="checkbox" id="doc_activo" class="rounded border-gray-300">
+              <label for="doc_activo" class="text-sm text-gray-700">Activo</label>
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg py-2.5 text-sm">
+              Guardar doctor
+            </button>
+            <p id="doc_msg" class="text-xs mt-2 text-red-600 hidden"></p>
+          </form>
+        </div>
+
+        <div class="bg-white rounded-xl shadow p-6 lg:col-span-2">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Doctores registrados</h2>
+          <div id="tablaDoctores"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESPECIALIDADES -->
+    <section id="tab-especialidades" class="tab-content hidden">
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="bg-white rounded-xl shadow p-6 lg:col-span-1">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Agregar / editar especialidad</h2>
+          <form id="formEspecialidad" class="space-y-3">
+            <input type="hidden" id="esp_id">
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la especialidad</label>
+              <input type="text" id="esp_nombre" required
+                     class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                     placeholder="Ej: Medicina General, Traumatología">
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg py-2.5 text-sm">
+              Guardar especialidad
+            </button>
+            <p id="esp_msg" class="text-xs mt-2 text-red-600 hidden"></p>
+          </form>
+        </div>
+
+        <div class="bg-white rounded-xl shadow p-6 lg:col-span-2">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Especialidades registradas</h2>
+          <div id="tablaEspecialidades"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- NOTIFICACIÓN CENTRAL -->
+  <div id="notifContainer"
+       class="fixed inset-0 flex items-center justify-center z-40 pointer-events-none hidden opacity-0 transition-opacity duration-200">
+    <div id="notifCard"
+         class="bg-white rounded-2xl shadow-2xl border border-gray-200 px-6 py-5 max-w-sm w-full mx-4 text-center pointer-events-auto">
+      <div class="flex flex-col items-center gap-3">
+        <div id="notifIcon" class="w-12 h-12 rounded-full flex items-center justify-center"></div>
+        <div>
+          <p id="notifTitle" class="font-semibold text-gray-900 mb-1"></p>
+          <p id="notifMessage" class="text-sm text-gray-600"></p>
+        </div>
+        <div id="notifButtons" class="mt-3 flex gap-2 justify-center">
+          <button id="notifCancel"
+                  class="px-3 py-1.5 text-xs rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100">
+            Cancelar
+          </button>
+          <button id="notifOk"
+                  class="px-3 py-1.5 text-xs rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+            Aceptar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    // ============
+    // Notificaciones
+    // ============
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('notifContainer');
+      const iconDiv = document.getElementById('notifIcon');
+      const titleEl = document.getElementById('notifTitle');
+      const msgEl = document.getElementById('notifMessage');
+      const btns = document.getElementById('notifButtons');
+
+      btns.classList.add('hidden');
+
+      let iconHtml, bgClass, title;
+      switch (type) {
+        case 'error':
+          iconHtml = '<i class="fa-solid fa-circle-exclamation"></i>';
+          bgClass = 'bg-red-100 text-red-600';
+          title = 'Error';
+          break;
+        case 'info':
+          iconHtml = '<i class="fa-solid fa-info"></i>';
+          bgClass = 'bg-blue-100 text-blue-600';
+          title = 'Información';
+          break;
+        default:
+          iconHtml = '<i class="fa-solid fa-check"></i>';
+          bgClass = 'bg-green-100 text-green-600';
+          title = 'Listo';
+      }
+
+      iconDiv.className = 'w-12 h-12 rounded-full flex items-center justify-center ' + bgClass;
+      iconDiv.innerHTML = iconHtml;
+      titleEl.textContent = title;
+      msgEl.textContent = message;
+
+      container.classList.remove('hidden', 'opacity-0');
+      container.classList.add('opacity-100');
+
+      setTimeout(() => {
+        container.classList.add('opacity-0');
+        setTimeout(() => container.classList.add('hidden'), 200);
+      }, 2000);
+    }
+
+    function showConfirm(message, options = {}) {
+      return new Promise((resolve) => {
+        const container = document.getElementById('notifContainer');
+        const iconDiv = document.getElementById('notifIcon');
+        const titleEl = document.getElementById('notifTitle');
+        const msgEl = document.getElementById('notifMessage');
+        const btns = document.getElementById('notifButtons');
+        const btnOk = document.getElementById('notifOk');
+        const btnCancel = document.getElementById('notifCancel');
+
+        btns.classList.remove('hidden');
+
+        iconDiv.className = 'w-12 h-12 rounded-full flex items-center justify-center bg-amber-100 text-amber-600';
+        iconDiv.innerHTML = '<i class="fa-solid fa-question"></i>';
+        titleEl.textContent = options.title || 'Confirmar acción';
+        msgEl.textContent = message;
+        btnOk.textContent = options.okText || 'Sí';
+        btnCancel.textContent = options.cancelText || 'No';
+
+        const close = (value) => {
+          btnOk.onclick = null;
+          btnCancel.onclick = null;
+          container.classList.add('opacity-0');
+          setTimeout(() => container.classList.add('hidden'), 200);
+          resolve(value);
+        };
+
+        btnOk.onclick = () => close(true);
+        btnCancel.onclick = () => close(false);
+
+        container.classList.remove('hidden', 'opacity-0');
+        container.classList.add('opacity-100');
+      });
+    }
+
+    // Helper para leer el usuario desde localStorage
+    function getUser() {
+      try {
+        return JSON.parse(localStorage.getItem("mr_user") || "null");
+      } catch {
+        return null;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // ========================
+      // Validar admin y header
+      // ========================
+      const user = getUser();
+      const adminInfoEl = document.getElementById('adminInfo');
+
+      if (!user || user.rol !== 'admin') {
+        window.location.href = 'IniciarSesion.html';
+        return;
+      }
+
+      if (adminInfoEl) {
+        adminInfoEl.textContent = user.correo || '';
+      }
+
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+          await fetch('/api/auth/logout', { method: 'POST' });
+          localStorage.clear();
+          window.location.href = 'IniciarSesion.html';
+        });
+      }
+
+      // ========================
+      // Tabs laterales
+      // ========================
+      const links = document.querySelectorAll('.sidebar-link');
+      const tabs = document.querySelectorAll('.tab-content');
+
+      links.forEach(link => {
+        link.addEventListener('click', () => {
+          const tab = link.getAttribute('data-tab');
+          links.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+
+          tabs.forEach(sec => {
+            sec.classList.toggle('hidden', sec.id !== ('tab-' + tab));
+          });
+        });
+      });
+
+      // ========================
+      // TABLAS helpers
+      // ========================
+      function tablaReservasAdmin(contenedorId, reservas) {
+        const cont = document.getElementById(contenedorId);
+        if (!cont) return;
+
+        if (!reservas || reservas.length === 0) {
+          cont.innerHTML = '<p class="text-sm text-gray-500">No hay reservas registradas.</p>';
+          return;
+        }
+
+        let html = `
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="border-b bg-gray-50 text-gray-700">
+                <th class="px-3 py-2 text-left">Paciente</th>
+                <th class="px-3 py-2 text-left">Clínica</th>
+                <th class="px-3 py-2 text-left">Especialidad</th>
+                <th class="px-3 py-2 text-left">Doctor</th>
+                <th class="px-3 py-2 text-left">Fecha</th>
+                <th class="px-3 py-2 text-left">Hora</th>
+                <th class="px-3 py-2 text-left">Método</th>
+                <th class="px-3 py-2 text-left">Estado</th>
+                <th class="px-3 py-2 text-left">Monto</th>
+                <th class="px-3 py-2 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        reservas.forEach(r => {
+          html += `
+            <tr class="border-b hover:bg-gray-50">
+              <td class="px-3 py-2">${r.paciente}</td>
+              <td class="px-3 py-2">${r.clinica}</td>
+              <td class="px-3 py-2">${r.especialidad}</td>
+              <td class="px-3 py-2">${r.doctor}</td>
+              <td class="px-3 py-2">${r.fecha}</td>
+              <td class="px-3 py-2">${r.hora}</td>
+              <td class="px-3 py-2">${r.metodo_pago}</td>
+              <td class="px-3 py-2">${r.estado}</td>
+              <td class="px-3 py-2">$${r.monto}</td>
+              <td class="px-3 py-2 text-center space-x-1">
+                <button data-id="${r.id}" class="btn-eliminar text-xs px-2 py-1 rounded bg-red-100 text-red-700">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+
+        html += `</tbody></table></div>`;
+        cont.innerHTML = html;
+
+        cont.querySelectorAll('.btn-eliminar').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.getAttribute('data-id');
+            const ok = await showConfirm('¿Eliminar esta reserva?', {
+              okText: 'Eliminar',
+              cancelText: 'Cancelar'
+            });
+            if (!ok) return;
+
+            try {
+              const res = await fetch(`/api/reservas/${id}`, { method: 'DELETE' });
+              const data = await res.json();
+              if (!res.ok || !data.ok) {
+                showToast(data.mensaje || 'No se pudo eliminar la reserva.', 'error');
+                return;
+              }
+              showToast('Reserva eliminada correctamente.', 'success');
+              await cargarDatosAdmin();
+            } catch {
+              showToast('Error al conectar con el servidor.', 'error');
+            }
+          });
+        });
+      }
+
+      function tablaUsuarios(contenedorId, usuarios) {
+        const cont = document.getElementById(contenedorId);
+        if (!cont) return;
+
+        if (!usuarios || usuarios.length === 0) {
+          cont.innerHTML = '<p class="text-sm text-gray-500">No hay usuarios registrados.</p>';
+          return;
+        }
+
+        let html = `
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="border-b bg-gray-50 text-gray-700">
+                <th class="px-3 py-2 text-left">Nombre</th>
+                <th class="px-3 py-2 text-left">Correo</th>
+                <th class="px-3 py-2 text-left">RUT</th>
+                <th class="px-3 py-2 text-left">Rol</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        usuarios.forEach(u => {
+          html += `
+            <tr class="border-b hover:bg-gray-50">
+              <td class="px-3 py-2">${u.nombres} ${u.apellidos}</td>
+              <td class="px-3 py-2">${u.correo}</td>
+              <td class="px-3 py-2">${u.rut}</td>
+              <td class="px-3 py-2">
+                <span class="badge ${u.rol === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}">
+                  ${u.rol}
+                </span>
+              </td>
+            </tr>
+          `;
+        });
+        html += `</tbody></table></div>`;
+        cont.innerHTML = html;
+      }
+
+      function tablaClinicas(contenedorId, clinicas) {
+        const cont = document.getElementById(contenedorId);
+        if (!cont) return;
+
+        if (!clinicas || clinicas.length === 0) {
+          cont.innerHTML = '<p class="text-sm text-gray-500">No hay clínicas registradas.</p>';
+          return;
+        }
+
+        let html = `<div class="grid md:grid-cols-2 gap-4">`;
+        clinicas.forEach(c => {
+          html += `
+            <div class="border border-gray-200 rounded-lg p-3 flex gap-3 items-start">
+              <div class="w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex items-center justify-center">
+                ${c.imagen ? `<img src="imagenes/${c.imagen}" class="w-full h-full object-cover" />`
+                           : '<i class="fa-solid fa-hospital text-gray-400 text-2xl"></i>'}
+              </div>
+              <div class="flex-1">
+                <p class="font-semibold text-gray-900">${c.nombre}</p>
+                <p class="text-xs text-gray-600">${c.direccion || ''}</p>
+                ${c.telefono ? `<p class="text-xs text-gray-600">Teléfono: ${c.telefono}</p>` : ''}
+                ${c.google_maps_url ? `<button onclick="window.open('${c.google_maps_url}','_blank')"
+                      class="mt-1 inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100">
+                      <i class="fa-solid fa-location-dot"></i> Ir al mapa
+                    </button>` : ''}
+                <div class="mt-2 flex gap-2">
+                  <button class="btn-editar-clinica text-xs px-3 py-1 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100"
+                          data-id="${c.id}">
+                    Editar
+                  </button>
+                  <button class="btn-eliminar-clinica text-xs px-3 py-1 rounded-full bg-red-50 text-red-700 hover:bg-red-100"
+                          data-id="${c.id}">
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+        cont.innerHTML = html;
+
+        document.querySelectorAll('.btn-editar-clinica').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            const clinica = clinicas.find(c => c.id === parseInt(id));
+            if (!clinica) return;
+
+            document.getElementById('cli_id').value = clinica.id;
+            document.getElementById('cli_nombre').value = clinica.nombre || '';
+            document.getElementById('cli_direccion').value = clinica.direccion || '';
+            document.getElementById('cli_telefono').value = clinica.telefono || '';
+            document.getElementById('cli_maps').value = clinica.google_maps_url || '';
+
+            document.getElementById('cli_msg').classList.add('hidden');
+            document.getElementById('formClinica').scrollIntoView({ behavior: 'smooth' });
+          });
+        });
+
+        document.querySelectorAll('.btn-eliminar-clinica').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            const ok = await showConfirm('¿Seguro que deseas eliminar esta clínica?', {
+              okText: 'Eliminar',
+              cancelText: 'Cancelar'
+            });
+            if (!ok) return;
+
+            try {
+              const res = await fetch(`/api/clinicas/${id}`, { method: 'DELETE' });
+              const data = await res.json();
+              if (!res.ok || !data.ok) {
+                showToast(data.mensaje || 'No se pudo eliminar la clínica.', 'error');
+                return;
+              }
+              showToast('Clínica eliminada correctamente.', 'success');
+              await cargarDatosAdmin();
+            } catch (err) {
+              console.error(err);
+              showToast('Error al conectar con el servidor.', 'error');
+            }
+          });
+        });
+      }
+
+      function tablaDoctores(contenedorId, doctores) {
+        const cont = document.getElementById(contenedorId);
+        if (!cont) return;
+
+        if (!doctores || doctores.length === 0) {
+          cont.innerHTML = '<p class="text-sm text-gray-500">No hay doctores registrados.</p>';
+          return;
+        }
+
+        let html = `
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="border-b bg-gray-50 text-gray-700">
+                <th class="px-3 py-2 text-left">Nombre</th>
+                <th class="px-3 py-2 text-left">Clínica</th>
+                <th class="px-3 py-2 text-left">Especialidad</th>
+                <th class="px-3 py-2 text-left">Monto</th>
+                <th class="px-3 py-2 text-left">Estado</th>
+                <th class="px-3 py-2 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        doctores.forEach(d => {
+          const estadoTxt = d.activo ? 'Activo' : 'Inactivo';
+          const estadoClase = d.activo ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700';
+
+          html += `
+            <tr class="border-b hover:bg-gray-50">
+              <td class="px-3 py-2">${d.nombre}</td>
+              <td class="px-3 py-2">${d.clinica}</td>
+              <td class="px-3 py-2">${d.especialidad}</td>
+              <td class="px-3 py-2">$${d.monto}</td>
+              <td class="px-3 py-2">
+                <span class="badge ${estadoClase}">
+                  ${estadoTxt}
+                </span>
+              </td>
+              <td class="px-3 py-2 text-center space-x-1">
+                <button class="btn-editar-doctor text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-800"
+                        data-id="${d.id}">
+                  Editar
+                </button>
+                <button class="btn-eliminar-doctor text-xs px-2 py-1 rounded bg-red-100 text-red-700"
+                        data-id="${d.id}">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+
+        html += `</tbody></table></div>`;
+        cont.innerHTML = html;
+
+        const formDoctor = document.getElementById('formDoctor');
+        const selClinica = document.getElementById('doc_clinica');
+
+        // Editar doctor
+        document.querySelectorAll('.btn-editar-doctor').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = parseInt(btn.dataset.id);
+            const doc = doctores.find(d => d.id === id);
+            if (!doc) return;
+
+            document.getElementById('doc_id').value = doc.id;
+            document.getElementById('doc_nombre').value = doc.nombre;
+            document.getElementById('doc_monto').value = doc.monto;
+            document.getElementById('doc_activo').checked = !!doc.activo;
+
+            if (selClinica) {
+              selClinica.value = doc.clinica_id;
+            }
+
+            // Cargar especialidades y seleccionar la del doctor
+            await cargarEspecialidadesAdmin(doc.especialidad_id);
+
+            if (formDoctor) {
+              document.getElementById('doc_msg').classList.add('hidden');
+              formDoctor.scrollIntoView({ behavior: 'smooth' });
+            }
+          });
+        });
+
+        // Eliminar doctor
+        document.querySelectorAll('.btn-eliminar-doctor').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            const ok = await showConfirm('¿Seguro que deseas eliminar este doctor?', {
+              okText: 'Eliminar',
+              cancelText: 'Cancelar'
+            });
+            if (!ok) return;
+
+            try {
+              const res = await fetch(`/api/admin/doctores/${id}`, { method: 'DELETE' });
+              const data = await res.json();
+              if (!res.ok || !data.ok) {
+                showToast(data.mensaje || 'No se pudo eliminar el doctor.', 'error');
+                return;
+              }
+              showToast('Doctor eliminado correctamente.', 'success');
+              await cargarDoctoresAdmin();
+            } catch (err) {
+              console.error(err);
+              showToast('Error al conectar con el servidor.', 'error');
+            }
+          });
+        });
+      }
+
+      function tablaEspecialidades(contenedorId, especialidades) {
+        const cont = document.getElementById(contenedorId);
+        if (!cont) return;
+
+        if (!especialidades || especialidades.length === 0) {
+          cont.innerHTML = '<p class="text-sm text-gray-500">No hay especialidades registradas.</p>';
+          return;
+        }
+
+        let html = `
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="border-b bg-gray-50 text-gray-700">
+                <th class="px-3 py-2 text-left">Nombre</th>
+                <th class="px-3 py-2 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        especialidades.forEach(e => {
+          html += `
+            <tr class="border-b hover:bg-gray-50">
+              <td class="px-3 py-2">${e.nombre}</td>
+              <td class="px-3 py-2 text-center space-x-1">
+                <button class="btn-editar-especialidad text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-800"
+                        data-id="${e.id}">
+                  Editar
+                </button>
+                <button class="btn-eliminar-especialidad text-xs px-2 py-1 rounded bg-red-100 text-red-700"
+                        data-id="${e.id}">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+
+        html += `</tbody></table></div>`;
+        cont.innerHTML = html;
+
+        const formEsp = document.getElementById('formEspecialidad');
+
+        // Editar especialidad
+        document.querySelectorAll('.btn-editar-especialidad').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = parseInt(btn.dataset.id);
+            const esp = especialidades.find(e => e.id === id);
+            if (!esp) return;
+
+            document.getElementById('esp_id').value = esp.id;
+            document.getElementById('esp_nombre').value = esp.nombre || '';
+            document.getElementById('esp_msg').classList.add('hidden');
+
+            if (formEsp) {
+              formEsp.scrollIntoView({ behavior: 'smooth' });
+            }
+          });
+        });
+
+        // Eliminar especialidad
+        document.querySelectorAll('.btn-eliminar-especialidad').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            const ok = await showConfirm('¿Seguro que deseas eliminar esta especialidad?', {
+              okText: 'Eliminar',
+              cancelText: 'Cancelar'
+            });
+            if (!ok) return;
+
+            try {
+              const res = await fetch(`/api/admin/especialidades/${id}`, { method: 'DELETE' });
+              const data = await res.json();
+              if (!res.ok || !data.ok) {
+                showToast(data.mensaje || 'No se pudo eliminar la especialidad.', 'error');
+                return;
+              }
+              showToast('Especialidad eliminada correctamente.', 'success');
+              await cargarEspecialidadesAdmin();
+            } catch (err) {
+              console.error(err);
+              showToast('Error al conectar con el servidor.', 'error');
+            }
+          });
+        });
+      }
+
+      // ========================
+      // CARGA de datos
+      // ========================
+      async function cargarClinicasParaDoctores() {
+        const selClinica = document.getElementById('doc_clinica');
+        if (!selClinica) return;
+        selClinica.innerHTML = '<option value="">Seleccione una clínica</option>';
+
+        try {
+          const res = await fetch('/api/clinicas');
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            data.forEach(c => {
+              const opt = document.createElement('option');
+              opt.value = c.id;
+              opt.textContent = c.nombre;
+              selClinica.appendChild(opt);
+            });
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      async function cargarEspecialidadesAdmin(especialidadSeleccionada) {
+        const selEsp = document.getElementById('doc_especialidad');
+        const contTabla = document.getElementById('tablaEspecialidades');
+
+        if (selEsp) {
+          selEsp.innerHTML = '<option value="">Seleccione especialidad</option>';
+        }
+
+        try {
+          const res = await fetch('/api/admin/especialidades');
+          const data = await res.json();
+
+          if (data.ok && Array.isArray(data.especialidades)) {
+            // llenar select de doctores
+            if (selEsp) {
+              data.especialidades.forEach(e => {
+                const opt = document.createElement('option');
+                opt.value = e.id;
+                opt.textContent = e.nombre;
+                selEsp.appendChild(opt);
+              });
+              if (especialidadSeleccionada) {
+                selEsp.value = especialidadSeleccionada;
+              }
+            }
+            // llenar tabla de especialidades
+            if (contTabla) {
+              tablaEspecialidades('tablaEspecialidades', data.especialidades);
+            }
+          }
+        } catch (err) {
+          console.error('Error al cargar especialidades admin:', err);
+        }
+      }
+
+      async function cargarDoctoresAdmin() {
+        try {
+          const res = await fetch('/api/admin/doctores');
+          const data = await res.json();
+          if (data.ok) {
+            tablaDoctores('tablaDoctores', data.doctores);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      async function cargarDatosAdmin() {
+        try {
+          const [resReservas, resUsuarios, resClinicas] = await Promise.all([
+            fetch('/api/admin/reservas'),
+            fetch('/api/admin/usuarios'),
+            fetch('/api/clinicas')
+          ]);
+
+          const dataReservas = await resReservas.json();
+          const dataUsuarios = await resUsuarios.json();
+          const dataClinicas = await resClinicas.json();
+
+          if (dataReservas.ok) {
+            tablaReservasAdmin('tablaReservasAdmin', dataReservas.reservas);
+            tablaReservasAdmin('tablaReservasRecientes', dataReservas.reservas.slice(0, 5));
+            const cardReservasHoy = document.getElementById('cardReservasHoy');
+            if (cardReservasHoy) {
+              cardReservasHoy.textContent = dataReservas.hoy || dataReservas.reservas.length;
+            }
+          }
+
+          if (dataUsuarios.ok) {
+            tablaUsuarios('tablaUsuarios', dataUsuarios.usuarios);
+            const cardUsuarios = document.getElementById('cardUsuarios');
+            if (cardUsuarios) {
+              cardUsuarios.textContent = dataUsuarios.usuarios.length;
+            }
+          }
+
+          if (Array.isArray(dataClinicas)) {
+            tablaClinicas('tablaClinicas', dataClinicas);
+            const cardClinicas = document.getElementById('cardClinicas');
+            if (cardClinicas) {
+              cardClinicas.textContent = dataClinicas.length;
+            }
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      // Llamadas iniciales
+      cargarDatosAdmin();
+      cargarClinicasParaDoctores();
+      cargarDoctoresAdmin();
+      cargarEspecialidadesAdmin();
+
+      // Cambio de clínica en form doctor (opcional, podemos recargar especialidades)
+      const selClinicaDoc = document.getElementById('doc_clinica');
+      if (selClinicaDoc) {
+        selClinicaDoc.addEventListener('change', () => {
+          cargarEspecialidadesAdmin();
+        });
+      }
+
+      // ========================
+      // SUBMIT formulario CLÍNICA
+      // ========================
+      const formClinica = document.getElementById('formClinica');
+      if (formClinica) {
+        formClinica.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const msg = document.getElementById('cli_msg');
+          msg.classList.add('hidden');
+          msg.textContent = '';
+
+          const id = document.getElementById('cli_id').value;
+          const nombre = document.getElementById('cli_nombre').value.trim();
+
+          if (!nombre) {
+            msg.textContent = 'El nombre de la clínica es obligatorio.';
+            msg.classList.remove('hidden');
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append('nombre', nombre);
+          formData.append('direccion', document.getElementById('cli_direccion').value.trim());
+          formData.append('telefono', document.getElementById('cli_telefono').value.trim());
+          formData.append('google_maps_url', document.getElementById('cli_maps').value.trim());
+          const file = document.getElementById('cli_imagen').files[0];
+          if (file) formData.append('imagen', file);
+
+          const url = id ? `/api/clinicas/${id}` : '/api/clinicas';
+          const method = id ? 'PUT' : 'POST';
+
+          try {
+            const res = await fetch(url, {
+              method,
+              body: formData
+            });
+            const data = await res.json();
+
+            if (!res.ok || !data.ok) {
+              msg.textContent = data.mensaje || 'No se pudo guardar la clínica.';
+              msg.classList.remove('hidden');
+              return;
+            }
+            showToast('Clínica guardada correctamente.', 'success');
+            formClinica.reset();
+            document.getElementById('cli_id').value = '';
+            await cargarDatosAdmin();
+          } catch (err) {
+            console.error(err);
+            msg.textContent = 'Error al conectar con el servidor.';
+            msg.classList.remove('hidden');
+          }
+        });
+      }
+
+      // ========================
+      // SUBMIT formulario DOCTOR
+      // ========================
+      const formDoctor = document.getElementById('formDoctor');
+      if (formDoctor) {
+        formDoctor.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const msg = document.getElementById('doc_msg');
+          msg.classList.add('hidden');
+          msg.textContent = '';
+
+          const id = document.getElementById('doc_id').value;
+          const nombre = document.getElementById('doc_nombre').value.trim();
+          const clinica_id = document.getElementById('doc_clinica').value;
+          const especialidad_id = document.getElementById('doc_especialidad').value;
+          const monto = document.getElementById('doc_monto').value;
+          const activo = document.getElementById('doc_activo').checked;
+
+          if (!nombre || !clinica_id || !especialidad_id || !monto) {
+            msg.textContent = 'Todos los campos son obligatorios.';
+            msg.classList.remove('hidden');
+            return;
+          }
+
+          const payload = {
+            nombre,
+            clinica_id,
+            especialidad_id,
+            monto,
+            activo
+          };
+
+          const url = id ? `/api/admin/doctores/${id}` : '/api/admin/doctores';
+          const method = id ? 'PUT' : 'POST';
+
+          try {
+            const res = await fetch(url, {
+              method,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            if (!res.ok || !data.ok) {
+              msg.textContent = data.mensaje || 'No se pudo guardar el doctor.';
+              msg.classList.remove('hidden');
+              return;
+            }
+
+            showToast('Doctor guardado correctamente.', 'success');
+            formDoctor.reset();
+            document.getElementById('doc_id').value = '';
+            document.getElementById('doc_activo').checked = true;
+            await cargarDoctoresAdmin();
+          } catch (err) {
+            console.error(err);
+            msg.textContent = 'Error al conectar con el servidor.';
+            msg.classList.remove('hidden');
+          }
+        });
+
+        // Por defecto, marcar activo
+        const checkActivo = document.getElementById('doc_activo');
+        if (checkActivo) checkActivo.checked = true;
+      }
+
+      // ========================
+      // SUBMIT formulario ESPECIALIDAD
+      // ========================
+      const formEspecialidad = document.getElementById('formEspecialidad');
+      if (formEspecialidad) {
+        formEspecialidad.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const msg = document.getElementById('esp_msg');
+          msg.classList.add('hidden');
+          msg.textContent = '';
+
+          const id = document.getElementById('esp_id').value;
+          const nombre = document.getElementById('esp_nombre').value.trim();
+
+          if (!nombre) {
+            msg.textContent = 'El nombre de la especialidad es obligatorio.';
+            msg.classList.remove('hidden');
+            return;
+          }
+
+          const payload = { nombre };
+          const url = id ? `/api/admin/especialidades/${id}` : '/api/admin/especialidades';
+          const method = id ? 'PUT' : 'POST';
+
+          try {
+            const res = await fetch(url, {
+              method,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            if (!res.ok || !data.ok) {
+              msg.textContent = data.mensaje || 'No se pudo guardar la especialidad.';
+              msg.classList.remove('hidden');
+              return;
+            }
+
+            showToast('Especialidad guardada correctamente.', 'success');
+            formEspecialidad.reset();
+            document.getElementById('esp_id').value = '';
+            await cargarEspecialidadesAdmin();
+          } catch (err) {
+            console.error(err);
+            msg.textContent = 'Error al conectar con el servidor.';
+            msg.classList.remove('hidden');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

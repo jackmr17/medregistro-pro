@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clínicas en Talca</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    .user-menu { display: none; }
+    .user-menu.show { display: block; }
+
+    .clinic-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .clinic-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    }
+    .clinic-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      border-color: #3b82f6;
+    }
+    .clinic-card:hover .clinic-image {
+      transform: scale(1.05);
+    }
+    .clinic-image {
+      transition: transform 0.3s ease;
+    }
+
+    .btn-reservar {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-reservar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+    .btn-reservar:hover::before {
+      left: 100%;
+    }
+    .btn-reservar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    }
+    .btn-reservar:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen font-sans">
+
+  <!-- NAVBAR -->
+  <nav class="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-30 shadow-lg">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
+      <a href="PaginaPrincipal.html" class="text-gray-900 font-semibold hover:text-gray-700 flex items-center gap-2 transition-colors">
+        <i class="fa-solid fa-house text-blue-600"></i> MedRegistro Pro
+      </a>
+
+      <div class="relative">
+        <button id="userBtn" class="text-gray-900 font-semibold hover:text-gray-700 flex items-center gap-2 transition-colors">
+          <i class="fa-solid fa-circle-user text-xl text-blue-600"></i>
+          <span id="userName">Iniciar Sesión</span>
+          <i class="fa-solid fa-chevron-down text-xs"></i>
+        </button>
+
+        <!-- MENU -->
+        <div id="userMenu" class="user-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
+
+          <a href="IniciarSesion.html" id="loginOption"
+             class="block px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors text-sm">Iniciar sesión</a>
+
+          <a href="PanelUsuario.html" id="userPanel"
+             class="block px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors text-sm hidden">Panel Usuario</a>
+
+          <a href="PanelAdmin.html" id="adminPanel"
+             class="block px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors text-sm hidden">Panel Administrador</a>
+
+          <button id="logoutBtn"
+                  class="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 transition-colors text-sm hidden">
+            Cerrar sesión
+          </button>
+
+          <a href="Clinicas.html"
+             class="block px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors text-sm">
+            Clínicas disponibles
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </nav>
+
+
+  <!-- CONTENIDO -->
+  <main class="max-w-7xl mx-auto px-6 py-12">
+
+    <h2 class="text-4xl font-bold text-gray-900 mb-12 text-center">
+      Clínicas Disponibles
+    </h2>
+
+    <div id="listaClinicas"
+         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Tarjetas cargan aquí -->
+    </div>
+
+  </main>
+
+
+<script>
+/* ============================
+      SESIÓN
+============================ */
+function getUser() {
+  try {
+    return JSON.parse(localStorage.getItem("mr_user") || sessionStorage.getItem("mr_user") || "null");
+  } catch { return null; }
+}
+
+const user = getUser();
+const userName = document.getElementById("userName");
+const loginOption = document.getElementById("loginOption");
+const logoutBtn = document.getElementById("logoutBtn");
+const userPanel = document.getElementById("userPanel");
+const adminPanel = document.getElementById("adminPanel");
+
+if (user) {
+  userName.textContent = user.nombres + " " + user.apellidos;
+  loginOption.classList.add("hidden");
+  logoutBtn.classList.remove("hidden");
+
+  if (user.rol === "admin") adminPanel.classList.remove("hidden");
+  if (user.rol === "user") userPanel.classList.remove("hidden");
+}
+
+document.getElementById("userBtn").addEventListener("click", () => {
+  document.getElementById("userMenu").classList.toggle("show");
+});
+
+logoutBtn.addEventListener("click", async () => {
+  await fetch("/api/auth/logout", { method: "POST" });
+  localStorage.clear();
+  sessionStorage.clear();
+  window.location.href = "PaginaPrincipal.html";
+});
+
+
+/* ============================
+      CARGAR CLÍNICAS
+============================ */
+async function cargarClinicas() {
+  try {
+    const r = await fetch("/api/clinicas");
+    const data = await r.json();
+
+    const cont = document.getElementById("listaClinicas");
+    cont.innerHTML = "";
+
+    if (!Array.isArray(data) || !data.length) {
+      cont.innerHTML = `<p class="text-center text-gray-500 text-lg">No hay clínicas registradas.</p>`;
+      return;
+    }
+
+    data.forEach(c => {
+      cont.innerHTML += `
+        <div class="clinic-card bg-white rounded-2xl p-8 border border-gray-200 flex flex-col gap-6">
+
+          <div class="flex items-start gap-6">
+            <img src="imagenes/${c.imagen || 'clinica-default.png'}"
+                 class="clinic-image w-24 h-24 object-cover rounded-xl shadow-lg flex-shrink-0"
+                 alt="Clínica ${c.nombre}">
+
+            <div class="flex-1">
+              <h3 class="text-2xl font-bold text-gray-900 mb-2">${c.nombre}</h3>
+              <p class="text-gray-600 text-base mb-2 flex items-center">
+                <i class="fa-solid fa-map-marker-alt mr-2 text-blue-500"></i>
+                ${c.direccion || "Dirección no disponible"}
+              </p>
+              <p class="text-gray-500 text-base flex items-center mb-2">
+                <i class="fa-solid fa-phone mr-2 text-green-500"></i>
+                ${c.telefono || "Sin teléfono"}
+              </p>
+
+              ${c.google_maps_url ? `
+                <a href="${c.google_maps_url}" target="_blank"
+                   class="inline-flex items-center justify-center mt-1 px-4 py-2 rounded-xl border border-blue-600 text-blue-600 text-sm font-semibold hover:bg-blue-50">
+                  <i class="fa-solid fa-location-dot mr-2"></i> Ir al mapa
+                </a>
+              ` : ''}
+            </div>
+          </div>
+
+          <button class="btn-reservar mt-auto text-white w-full font-bold py-4 rounded-xl flex items-center justify-center text-lg"
+                  data-id="${c.id}">
+            <i class="fa-solid fa-calendar-plus mr-3"></i>Reservar Cita
+          </button>
+
+        </div>
+      `;
+    });
+  } catch (err) {
+    console.error(err);
+    document.getElementById("listaClinicas").innerHTML =
+      `<p class="text-center text-red-500">Error al cargar las clínicas.</p>`;
+  }
+}
+
+cargarClinicas();
+
+
+/* ============================
+      RESERVAR
+============================ */
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".btn-reservar");
+  if (!btn) return;
+
+  const id = btn.getAttribute("data-id");
+
+  // Guardamos la clínica que el usuario quiere reservar
+  sessionStorage.setItem("mr_clinica_id", id);
+
+  if (!user) {
+    const next = encodeURIComponent(`Reservas.html?clinica_id=${id}`);
+    window.location.href = `IniciarSesion.html?next=${next}`;
+    return;
+  }
+
+  window.location.href = `Reservas.html?clinica_id=${id}`;
+});
+</script>
+
+</body>
+</html>
