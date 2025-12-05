@@ -2,14 +2,14 @@
 const mysql = require('mysql2/promise');
 
 const pool = mysql.createPool({
-  host: '127.0.0.1',
-  user: 'root',
-  password: '',
-  database: 'medregistropro',
+  host: '127.0.0.1',          // o 'localhost'
+  user: 'medreg_user',        // usuario que creaste en MySQL del servidor
+  password: 'TuClaveFuerte123!', // clave que definiste
+  database: 'medregistropro', // misma BD de tu script
+  port: 3306,                 // puerto por defecto en Linux (no 3307)
   waitForConnections: true,
   connectionLimit: 10,
-  namedPlaceholders: true,
-  port: 3307
+  namedPlaceholders: true
 });
 
 async function query(sql, params) {
